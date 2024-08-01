@@ -1,13 +1,14 @@
 package main
 
 import (
-	"env86"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"os"
 	"strings"
+
+	"github.com/progrium/env86"
 
 	"github.com/progrium/go-netstack/vnet"
 	"tractor.dev/toolkit-go/engine/cli"

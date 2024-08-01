@@ -2,13 +2,14 @@ package env86
 
 import (
 	"bytes"
-	"env86/assets"
-	"env86/network"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/progrium/env86/assets"
+	"github.com/progrium/env86/network"
 
 	"golang.org/x/net/websocket"
 	"golang.org/x/term"

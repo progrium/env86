@@ -3,12 +3,13 @@ package env86
 import (
 	"bytes"
 	"context"
-	"env86/assets"
-	"env86/namespacefs"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/progrium/env86/assets"
+	"github.com/progrium/env86/namespacefs"
 
 	"github.com/chromedp/chromedp"
 	"github.com/progrium/go-netstack/vnet"

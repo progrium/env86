@@ -1,13 +1,14 @@
 package main
 
 import (
-	"env86"
-	"env86/assets"
-	"env86/fsutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/progrium/env86"
+	"github.com/progrium/env86/assets"
+	"github.com/progrium/env86/fsutil"
 
 	"tractor.dev/toolkit-go/engine/cli"
 	"tractor.dev/toolkit-go/engine/fs"

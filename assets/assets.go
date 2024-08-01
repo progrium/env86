@@ -2,10 +2,11 @@ package assets
 
 import (
 	"embed"
-	"env86/fsutil"
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/progrium/env86/fsutil"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"tractor.dev/toolkit-go/engine/fs"

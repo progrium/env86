@@ -5,13 +5,14 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
-	"env86/fsutil"
-	"env86/tarfs"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/progrium/env86/fsutil"
+	"github.com/progrium/env86/tarfs"
 
 	"github.com/klauspost/compress/zstd"
 	"tractor.dev/toolkit-go/engine/fs"

@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
-	"env86"
-	"env86/assets"
-	"env86/namespacefs"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/progrium/env86"
+	"github.com/progrium/env86/assets"
+	"github.com/progrium/env86/namespacefs"
 
 	"tractor.dev/toolkit-go/engine/cli"
 )
