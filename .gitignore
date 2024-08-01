@@ -2,3 +2,4 @@ assets/*.bin
 assets/libv86.js
 assets/v86.wasm
 /env86
+/NOTES

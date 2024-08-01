@@ -181,6 +181,8 @@ env86 boot --net --save ./alpine-net
 
 At the prompt we can run `./networking.sh` and it should get an IP and be able to connect to the Internet. 
 
+We can use networking from the browser if we add `network_relay_url` to the config passed to `env86.boot()` in `index.html`. We can run `env86 network` to start a virtual network and get a URL to use for `network_relay_url`. 
+
 ### More Features
 
 A few more features are tucked away or are in progress. The next major focus is on a standard guest service
