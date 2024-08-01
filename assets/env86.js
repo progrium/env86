@@ -35,6 +35,12 @@ export async function boot(imageURL, options) {
             basefs: `${imageURL}/fs.json`,
         };
     }
+
+    ["bios", "vga_bios", "initrd", "bzimage"].forEach(key => {
+        if (config[key] && config[key]["url"].startsWith("./")) {
+            config[key]["url"] = imageURL+config[key]["url"].slice(1)
+        }
+    });
     
     let peer = undefined;
     if (config["control_url"]) {

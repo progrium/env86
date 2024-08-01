@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/progrium/env86/assets"
 	"github.com/progrium/env86/fsutil"
 	"github.com/progrium/env86/tarfs"
 
@@ -61,22 +62,28 @@ func LoadImage(path string) (*Image, error) {
 func (i *Image) Config() (Config, error) {
 	coldboot := !i.HasInitialState()
 	if ok, _ := fs.Exists(i.FS, "image.json"); !ok {
-		return Config{
-			ColdBoot: coldboot,
-		}, nil
+		return Config{}, fmt.Errorf("no image.json found in image")
 	}
-	b, err := fs.ReadFile(i.FS, "image.json")
+	v86conf, err := i.v86Config()
 	if err != nil {
-		return Config{}, err
-	}
-	var v86conf V86Config
-	if err := json.Unmarshal(b, &v86conf); err != nil {
 		return Config{}, err
 	}
 	return Config{
 		V86Config: v86conf,
 		ColdBoot:  coldboot,
 	}, nil
+}
+
+func (i *Image) v86Config() (V86Config, error) {
+	b, err := fs.ReadFile(i.FS, "image.json")
+	if err != nil {
+		return V86Config{}, err
+	}
+	var v86conf V86Config
+	if err := json.Unmarshal(b, &v86conf); err != nil {
+		return V86Config{}, err
+	}
+	return v86conf, nil
 }
 
 func (i *Image) HasInitialState() bool {
@@ -136,9 +143,43 @@ func (i *Image) SaveInitialState(r io.Reader) error {
 
 func (i *Image) Prepare() (fs.FS, error) {
 	fsys := memfs.New()
+	conf, err := i.v86Config()
+	if err != nil {
+		return nil, err
+	}
 
 	if err := fsutil.CopyFS(i.FS, ".", fsys, "."); err != nil {
 		return nil, err
+	}
+
+	if !i.HasInitialState() {
+		conf.BIOS = &ImageConfig{URL: "./seabios.bin"}
+		if err := fsutil.CopyFS(assets.Dir, "seabios.bin", fsys, "seabios.bin"); err != nil {
+			return nil, err
+		}
+
+		conf.VGABIOS = &ImageConfig{URL: "./vgabios.bin"}
+		if err := fsutil.CopyFS(assets.Dir, "vgabios.bin", fsys, "vgabios.bin"); err != nil {
+			return nil, err
+		}
+
+		conf.Initrd = &ImageConfig{URL: "./initramfs.bin"}
+		if err := fsutil.CopyFS(assets.Dir, "initramfs.bin", fsys, "initramfs.bin"); err != nil {
+			return nil, err
+		}
+
+		conf.BZImage = &ImageConfig{URL: "./vmlinuz.bin"}
+		if err := fsutil.CopyFS(assets.Dir, "vmlinuz.bin", fsys, "vmlinuz.bin"); err != nil {
+			return nil, err
+		}
+
+		if err := writeConfig(fsys, "image.json", conf); err != nil {
+			return nil, err
+		}
+	}
+
+	if !i.HasInitialState() || i.hasCompressedInitialState() {
+		return fsys, nil
 	}
 
 	fsys.MkdirAll("state", 0755)
@@ -150,24 +191,20 @@ func (i *Image) Prepare() (fs.FS, error) {
 		return nil, err
 	}
 
-	configIn, err := fs.ReadFile(fsys, "image.json")
-	if err != nil {
-		return nil, err
-	}
-	var config map[string]any
-	if err := json.Unmarshal(configIn, &config); err != nil {
-		return nil, err
-	}
-	config["initial_state_parts"] = n
-	configOut, err := json.MarshalIndent(config, "", "  ")
-	if err != nil {
-		return nil, err
-	}
-	if err := fs.WriteFile(fsys, "image.json", configOut, 0644); err != nil {
+	conf.InitialStateParts = n
+	if err := writeConfig(fsys, "image.json", conf); err != nil {
 		return nil, err
 	}
 
 	return fsys, nil
+}
+
+func writeConfig(fsys fs.FS, filename string, cfg V86Config) error {
+	data, err := json.MarshalIndent(cfg, "", "  ")
+	if err != nil {
+		return err
+	}
+	return fs.WriteFile(fsys, filename, data, 0644)
 }
 
 func splitFile(fsys fs.FS, filename string, outputDir string, bytesPerFile int) (int, error) {

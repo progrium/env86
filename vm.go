@@ -49,6 +49,9 @@ func New(image *Image, config Config) (*VM, error) {
 	if config.WasmPath == "" {
 		config.WasmPath = "/v86.wasm"
 	}
+	if config.Filesystem == nil {
+		config.Filesystem = &FilesystemConfig{}
+	}
 	if config.Filesystem.BaseFS == "" {
 		config.Filesystem.BaseFS = "/image/fs.json"
 		config.Filesystem.BaseURL = "/image/fs/"
