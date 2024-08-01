@@ -1,0 +1,19 @@
+FROM i386/alpine:3.18.6
+
+ENV KERNEL=lts
+
+# Install mkinitfs from edge (todo: remove this when 3.19+ has worked properly with 9pfs)
+RUN apk add mkinitfs --no-cache --allow-untrusted --repository https://dl-cdn.alpinelinux.org/alpine/edge/main/ 
+
+RUN if [ "$KERNEL" == "lts" ]; then \
+    apk add linux-lts \
+            linux-firmware-none \
+            linux-firmware-sb16; \
+else \
+    apk add linux-$KERNEL; \
+fi
+
+# Generate initramfs with 9p modules
+RUN mkinitfs -F "ata base ide scsi virtio ext4 9p" $(cat /usr/share/kernel/$KERNEL/kernel.release)
+
+CMD cp /boot/vmlinuz-lts /dst/vmlinuz.bin && cp /boot/initramfs-lts /dst/initramfs.bin
