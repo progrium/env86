@@ -1,4 +1,4 @@
-.PHONY: install build assets
+.PHONY: install build assets release
 
 VERSION=0.1dev
 
