@@ -16,4 +16,4 @@ fi
 # Generate initramfs with 9p modules
 RUN mkinitfs -F "ata base ide scsi virtio ext4 9p" $(cat /usr/share/kernel/$KERNEL/kernel.release)
 
-CMD cp /boot/vmlinuz-lts /dst/vmlinuz.bin && cp /boot/initramfs-lts /dst/initramfs.bin
+CMD cp /boot/vmlinuz-lts /dst/vmlinuz.bin && cp /boot/initramfs-lts /dst/initramfs.bin && chmod 644 /dst/vmlinuz.bin /dst/initramfs.bin
