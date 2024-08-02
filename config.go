@@ -35,7 +35,8 @@ type V86Config struct {
 	SerialContainer             string            `json:"serial_container,omitempty"`
 	PreserveMAC                 bool              `json:"preserve_mac_from_state_image,omitempty"`
 
-	InitialStateParts int `json:"initial_state_parts,omitempty"`
+	InitialStateParts int  `json:"initial_state_parts,omitempty"`
+	HasGuestService   bool `json:"has_guest_service,omitempty"`
 }
 
 type FilesystemConfig struct {

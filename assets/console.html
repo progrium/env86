@@ -32,6 +32,7 @@ body {
   vm.add_listener("emulator-loaded", async () => {
     console.log("v86 config:", vm.config);  
   });
+  window.vm = vm;
 </script>
 </body>
 </html>

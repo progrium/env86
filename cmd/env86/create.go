@@ -5,17 +5,22 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 
+	"github.com/progrium/env86/assets"
+	"github.com/progrium/env86/fsutil"
 	"tractor.dev/toolkit-go/engine/cli"
 	"tractor.dev/toolkit-go/engine/fs"
+	"tractor.dev/toolkit-go/engine/fs/osfs"
 )
 
 func createCmd() *cli.Command {
 	var (
 		dir    string
 		docker string
+		guest  bool
 	)
 	cmd := &cli.Command{
 		Usage: "create <image>",
@@ -89,6 +94,12 @@ func createCmd() *cli.Command {
 				log.Fatal("nothing to create from")
 			}
 
+			if guest {
+				if err := fsutil.CopyFS(assets.Dir, "guest86", osfs.New(), path.Join(dir, "bin/guest86")); err != nil {
+					log.Fatal(err)
+				}
+			}
+
 			if err := os.MkdirAll(imagePath, 0755); err != nil {
 				log.Fatal(err)
 			}
@@ -99,6 +110,36 @@ func createCmd() *cli.Command {
 			imageConfig := map[string]any{
 				"cmdline": "rw root=host9p rootfstype=9p rootflags=trans=virtio,cache=loose modules=virtio_pci console=ttyS0 console=tty1",
 			}
+
+			if guest {
+				imageConfig["has_guest_service"] = true
+			}
+
+			// look for bootable kernel
+			var kernelMatches []string
+			for _, p := range []string{"vmlinuz*", "boot/vmlinuz*", "bzimage*", "boot/bzimage*"} {
+				m, err := fs.Glob(osfs.New(), filepath.Join(dir, p))
+				if err != nil {
+					log.Fatal(err)
+				}
+				kernelMatches = append(kernelMatches, m...)
+			}
+
+			// look for initrd
+			var initrdMatches []string
+			for _, p := range []string{"initrd*", "boot/initrd*", "initramfs*", "boot/initramfs*"} {
+				m, err := fs.Glob(osfs.New(), filepath.Join(dir, p))
+				if err != nil {
+					log.Fatal(err)
+				}
+				initrdMatches = append(initrdMatches, m...)
+			}
+
+			// if both are found, assume use them
+			if len(kernelMatches) > 0 && len(initrdMatches) > 0 {
+				imageConfig["bzimage_initrd_from_filesystem"] = true
+			}
+
 			b, err := json.MarshalIndent(imageConfig, "", "  ")
 			if err != nil {
 				log.Fatal(err)
@@ -111,6 +152,7 @@ func createCmd() *cli.Command {
 	}
 	cmd.Flags().StringVar(&dir, "from-dir", "", "make image from directory root")
 	cmd.Flags().StringVar(&docker, "from-docker", "", "make image from Docker image or Dockerfile")
+	cmd.Flags().BoolVar(&guest, "with-guest", false, "add guest service to /bin")
 	return cmd
 }
 
@@ -120,6 +162,16 @@ func run(dir, name string, args ...string) {
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		os.Stderr.Write(out)
+		log.Fatal(err)
+	}
+}
+
+func stream(dir, name string, args ...string) {
+	cmd := exec.Command(name, args...)
+	cmd.Dir = dir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

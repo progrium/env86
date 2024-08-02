@@ -1,6 +1,8 @@
 
 import * as duplex from "./duplex.min.js";
 
+export { duplex };
+
 export async function boot(imageURL, options) {
     const resp = await fetch(`${imageURL}/image.json`);
     const imageConfig = await resp.json();
@@ -49,7 +51,11 @@ export async function boot(imageURL, options) {
         config = Object.assign(config, resp.value);
     }
 
-    const vm = new V86(config);
+    // always, why not. 
+    // for possible guest service
+    config.uart1 = true;
+    
+    const vm = new window.V86(config);
 
     if (peer) {
         let tty = undefined;
@@ -109,8 +115,6 @@ export async function boot(imageURL, options) {
             }
             return new Uint8Array(array);
         }));
-
-        
 
         peer.respond();
     }
