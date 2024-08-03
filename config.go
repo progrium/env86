@@ -6,7 +6,7 @@ type Config struct {
 	EnableTTY     bool
 	ColdBoot      bool
 	SaveOnExit    bool
-	ExitOnPattern string
+	ExitPattern   string
 	EnableNetwork bool
 	ChromeDP      bool
 	ConsoleAddr   string

@@ -6,13 +6,11 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/progrium/env86/assets"
 	"github.com/progrium/env86/network"
 
 	"golang.org/x/net/websocket"
-	"golang.org/x/term"
 	"tractor.dev/toolkit-go/duplex/codec"
 	"tractor.dev/toolkit-go/duplex/fn"
 	"tractor.dev/toolkit-go/duplex/mux"
@@ -74,55 +72,7 @@ func (vm *VM) handleControl(conn *websocket.Conn) {
 			log.Println(err)
 			return
 		}
-
-		go io.Copy(os.Stdout, ch)
-
-		oldstate, err := term.MakeRaw(int(os.Stdin.Fd()))
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer term.Restore(int(os.Stdin.Fd()), oldstate)
-
-		// send newline to trigger new prompt
-		// since most saves will be at prompt
-		if vm.image.HasInitialState() {
-			io.WriteString(ch, "\n")
-		}
-
-		buffer := make([]byte, 1024)
-		for {
-			n, err := os.Stdin.Read(buffer)
-			if err != nil {
-				log.Fatal("Error reading from stdin:", err)
-			}
-
-			for i := 0; i < n; i++ {
-				// Check for Ctrl-D (ASCII 4)
-				if buffer[i] == 4 {
-					term.Restore(int(os.Stdin.Fd()), oldstate)
-					if vm.config.SaveOnExit {
-						fmt.Println("\r\nCtrl-D detected. Saving...")
-						r, err := vm.Save()
-						if err != nil {
-							log.Fatal(err)
-						}
-						if err := vm.image.SaveInitialState(r); err != nil {
-							log.Fatal(err)
-						}
-					} else {
-						fmt.Println("\r\nCtrl-D detected. Exiting...")
-					}
-					ch.Close()
-					vm.Stop()
-					return
-				}
-			}
-
-			_, err = ch.Write(buffer[:n])
-			if err != nil {
-				log.Println(err)
-			}
-		}
+		vm.handleTTY(ch)
 	}))
 
 	vm.peer.Respond()

@@ -117,6 +117,21 @@ func New(image *Image, config Config) (*VM, error) {
 	return vm, nil
 }
 
+func (vm *VM) Exit(reason string) {
+	// not sure if this should be on this API
+	// because its made for the CLI and writes to stdout
+	if vm.config.SaveOnExit {
+		fmt.Printf("\r\n%s. Saving...\n", reason)
+		err := vm.SaveInitialState()
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		fmt.Printf("\r\n%s. Exiting...\n", reason)
+	}
+	vm.Stop()
+}
+
 func (vm *VM) Start() error {
 	if vm.app == nil && !vm.config.ChromeDP {
 		launched := make(chan bool)

@@ -48,7 +48,7 @@ func bootCmd() *cli.Command {
 			cfg.SaveOnExit = saveOnExit
 			cfg.NoConsole = noConsole
 			cfg.EnableTTY = enableTTY
-			cfg.ExitOnPattern = exitOn
+			cfg.ExitPattern = exitOn
 			cfg.EnableNetwork = enableNet
 			cfg.ChromeDP = useCDP
 
@@ -70,16 +70,7 @@ func bootCmd() *cli.Command {
 					for {
 						_, err := os.Stdin.Read(buffer)
 						if err == io.EOF {
-							if cfg.SaveOnExit {
-								fmt.Println("\r\nCtrl-D detected. Saving...")
-								err := vm.SaveInitialState()
-								if err != nil {
-									log.Fatal(err)
-								}
-							} else {
-								fmt.Println("\r\nCtrl-D detected. Exiting...")
-							}
-							vm.Stop()
+							vm.Exit("Ctrl-D detected")
 							return
 						}
 					}
@@ -113,7 +104,7 @@ func bootCmd() *cli.Command {
 	cmd.Flags().BoolVar(&enableTTY, "ttyS0", false, "open TTY over serial0")
 	cmd.Flags().BoolVar(&noMouse, "no-mouse", false, "disable mouse")
 	cmd.Flags().BoolVar(&noKeyboard, "no-keyboard", false, "disable keyboard")
-	// cmd.Flags().StringVar(&exitOn, "exit-on", "", "exit when string is matched in serial TTY")
+	cmd.Flags().StringVar(&exitOn, "exit-on", "", "exit when string is matched in serial TTY")
 	cmd.Flags().StringVar(&portForward, "p", "", "forward TCP port (ex: 8080:80)")
 	return cmd
 }
