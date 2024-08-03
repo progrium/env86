@@ -25,6 +25,7 @@ func main() {
 	root.AddCommand(networkCmd())
 	root.AddCommand(serveCmd())
 	root.AddCommand(createCmd())
+	root.AddCommand(assetsCmd())
 
 	desktop.Start(func() {
 		if err := cli.Execute(context.Background(), root, os.Args[1:]); err != nil {

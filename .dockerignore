@@ -1,0 +1,8 @@
+assets/*.bin
+assets/libv86.js
+assets/v86.wasm
+assets/guest86
+/env86
+/NOTES
+/local
+/dist

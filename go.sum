@@ -93,5 +93,9 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c h1:dUUwHk2QECo/6vqA44rthZ8ie
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 tractor.dev/toolkit-go v0.0.0-20240731233937-ae3586204eaa h1:Y/12K1pZSD2eNP66ZsNPdV1RapbchCyuWzarZl8SGQs=
 tractor.dev/toolkit-go v0.0.0-20240731233937-ae3586204eaa/go.mod h1:vI9Jf9tepHLrUqGQf7XZuRcQySNajWRKBjPD4+Ay72I=
+tractor.dev/toolkit-go v0.0.0-20240803025011-41e6d25b5f58 h1:DVdn8XVRn4FsnkZf+IPs1xpFBNphhfMk2mb+/ipJXZw=
+tractor.dev/toolkit-go v0.0.0-20240803025011-41e6d25b5f58/go.mod h1:vI9Jf9tepHLrUqGQf7XZuRcQySNajWRKBjPD4+Ay72I=
 tractor.dev/toolkit-go/desktop v0.0.0-20240731233937-ae3586204eaa h1:7PlJdvA4+4meGBFWY5QSEm280mQFV0t5uuRh+FnWcsI=
 tractor.dev/toolkit-go/desktop v0.0.0-20240731233937-ae3586204eaa/go.mod h1:fILIBgVk3wDV011KSp/PYf38ZSbOLCJpUgC/YGwWwdY=
+tractor.dev/toolkit-go/desktop v0.0.0-20240803025011-41e6d25b5f58 h1:AGmtDV0keLgB1QRIWYv4HCQHJsZR7yLGUeGkbbNTRbo=
+tractor.dev/toolkit-go/desktop v0.0.0-20240803025011-41e6d25b5f58/go.mod h1:fILIBgVk3wDV011KSp/PYf38ZSbOLCJpUgC/YGwWwdY=
