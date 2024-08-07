@@ -61,8 +61,7 @@ export async function boot(imageURL, options) {
         let tty = undefined;
         const enc = new TextEncoder();
         vm.add_listener("emulator-loaded", async () => {
-            peer.call("loaded", []);
-        
+
             if (config.EnableTTY && tty === undefined) {
                 const tty = await peer.call("tty");
                 vm.add_listener("serial0-output-byte", (b) => {
@@ -80,6 +79,53 @@ export async function boot(imageURL, options) {
                     }
                 })();
             }
+
+            if (config.has_guest_service) {
+                const guest = new WebSocket(config["control_url"].replace("ctl", "guest"));
+                guest.binaryType = "arraybuffer";
+                const messageSizes = new Map([
+                    [100, 13], // open
+                    [101, 17], // open-confirm
+                    [102, 5], // open-failure
+                    [103, 9], // window-adjust
+                    [104, 9], // data
+                    [105, 5], // eof
+                    [106, 5], // close
+                ]);
+                let buf = [];
+                vm.add_listener("serial1-output-byte", (byte) => {
+                    if (buf.length === 0) {
+                        buf.push(byte);
+                        return;
+                    }
+                    buf.push(byte);
+                    let expectedSize = undefined;
+                    // check if data message
+                    if (buf[0] === 104 && buf.length >= 9) {
+                        const view = new DataView((new Uint8Array(buf)).buffer);
+                        expectedSize = 9+view.getUint32(5);
+                    } else {
+                        expectedSize = messageSizes.get(buf[0]);
+                    }
+                    if (expectedSize === undefined) {
+                        console.warn("unexpected buffer:", buf);
+                        buf = [];
+                        return;
+                    }
+                    if (buf.length < expectedSize) {
+                        return;
+                    }
+                    const buf2 = new Uint8Array(buf);
+                    guest.send(buf2);
+                    buf = [];
+                });
+                guest.onmessage = (event) => {
+                    const data = new Uint8Array(event.data)
+                    vm.serial_send_bytes(1, data);
+                }
+            }
+
+            peer.call("loaded", []);
         });
 
         peer.handle("pause", duplex.handlerFrom(() => vm.stop()));

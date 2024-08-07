@@ -2,18 +2,17 @@ package main
 
 import (
 	"io"
-	"os/exec"
+	"net"
 	"sync"
 
-	"github.com/creack/pty"
 	"tractor.dev/toolkit-go/duplex/rpc"
 )
 
-func (api *API) Terminal(r rpc.Responder, c *rpc.Call) {
-	c.Receive(nil)
+func (api *API) Dial(r rpc.Responder, c *rpc.Call) {
+	var addr string
+	c.Receive(&addr)
 
-	cmd := exec.Command("/bin/sh")
-	f, err := pty.Start(cmd)
+	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		r.Return(err)
 		return
@@ -28,12 +27,12 @@ func (api *API) Terminal(r rpc.Responder, c *rpc.Call) {
 
 	wg.Add(1)
 	go func() {
-		io.Copy(ch, f)
+		io.Copy(ch, conn)
 		wg.Done()
 	}()
 	wg.Add(1)
 	go func() {
-		io.Copy(f, ch)
+		io.Copy(conn, ch)
 		wg.Done()
 	}()
 

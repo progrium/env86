@@ -14,6 +14,8 @@ import (
 	"tractor.dev/toolkit-go/engine/fs/osfs"
 )
 
+var Version = "dev"
+
 func main() {
 	flag.Parse()
 	serialPort := flag.Arg(0)
@@ -41,9 +43,8 @@ type API struct {
 	FS fs.FS
 }
 
-// helpful when getting plumbing setup
-func (api *API) Hello() string {
-	return "Hi"
+func (api *API) Version() string {
+	return Version
 }
 
 // this is somewhat specific to Alpine...

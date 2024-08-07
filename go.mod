@@ -8,6 +8,7 @@ require (
 	github.com/chromedp/chromedp v0.9.5
 	github.com/evanw/esbuild v0.23.0
 	github.com/gorilla/websocket v1.5.3
+	github.com/hugelgupf/p9 v0.3.0
 	github.com/klauspost/compress v1.17.9
 	github.com/progrium/go-netstack v0.0.0-20240720002214-37b2b8227b91
 	golang.org/x/net v0.26.0
@@ -36,6 +37,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/progrium/darwinkit v0.5.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/u-root/uio v0.0.0-20230305220412-3e8cd9d6bf63 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	golang.org/x/mod v0.18.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect

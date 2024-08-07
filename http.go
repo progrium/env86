@@ -26,6 +26,7 @@ func (vm *VM) startHTTP() {
 
 	mux := http.NewServeMux()
 	mux.Handle("/net", network.Handler(vm.net))
+	mux.Handle("/guest", websocket.Handler(vm.handleGuest))
 	mux.Handle("/ctl", websocket.Handler(vm.handleControl))
 	mux.Handle("/env86.min.js", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "text/javascript")

@@ -25,6 +25,7 @@ type VM struct {
 	image     *Image
 	config    Config
 	console   *Console
+	guest     *Guest
 	addr      string
 	fsys      fs.FS
 	net       *vnet.VirtualNetwork
@@ -276,6 +277,11 @@ func (vm *VM) Restore(state io.Reader) error {
 	}
 	_, err = vm.peer.Call(context.TODO(), "restore", fn.Args{b}, nil)
 	return err
+}
+
+// Guest is an API to interact with the guest service
+func (vm *VM) Guest() *Guest {
+	return vm.guest
 }
 
 // Console is an API to interact with the screen, keyboard, and mouse
