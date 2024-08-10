@@ -93,6 +93,8 @@ func (fs *FS) Open(name string) (fs.File, error) {
 	}
 
 	nf := *file
+	br := *nf.data
+	nf.data = &br
 
 	return &nf, nil
 }
