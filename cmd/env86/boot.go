@@ -33,7 +33,16 @@ func bootCmd() *cli.Command {
 		Short: "boot and run a VM",
 		Args:  cli.MinArgs(1),
 		Run: func(ctx *cli.Context, args []string) {
-			image, err := env86.LoadImage(args[0])
+			imagePath := args[0]
+			if !strings.HasPrefix(imagePath, "./") {
+				exists, fullPath := globalImage(imagePath)
+				if !exists {
+					log.Fatal("global image not found")
+				}
+				imagePath = fullPath
+			}
+
+			image, err := env86.LoadImage(imagePath)
 			if err != nil {
 				log.Fatal(err)
 			}
