@@ -5,12 +5,18 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"golang.org/x/term"
 )
 
 func (vm *VM) handleTTY(ch io.ReadWriteCloser) {
+	if vm.serialPipe != nil {
+		vm.joinSerialPipe(ch)
+		return
+	}
+
 	oldstate, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		log.Fatal(err)
@@ -80,4 +86,21 @@ func (vm *VM) handleTTY(ch io.ReadWriteCloser) {
 			log.Println(err)
 		}
 	}
+}
+
+func (vm *VM) joinSerialPipe(ch io.ReadWriteCloser) {
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		io.Copy(ch, vm.serialPipe)
+		wg.Done()
+	}()
+	wg.Add(1)
+	go func() {
+		io.Copy(vm.serialPipe, ch)
+		wg.Done()
+	}()
+
+	wg.Wait()
 }

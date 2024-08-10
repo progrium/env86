@@ -13,7 +13,7 @@ require (
 	github.com/progrium/go-netstack v0.0.0-20240720002214-37b2b8227b91
 	golang.org/x/net v0.26.0
 	golang.org/x/term v0.22.0
-	tractor.dev/toolkit-go v0.0.0-20240803025011-41e6d25b5f58
+	tractor.dev/toolkit-go v0.0.0-20240810203015-1b3d95b70efe
 	tractor.dev/toolkit-go/desktop v0.0.0-20240803025011-41e6d25b5f58
 )
 

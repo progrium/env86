@@ -137,7 +137,7 @@ export async function boot(imageURL, options) {
         peer.handle("restore", duplex.handlerFrom((data) => {
             vm.restore_state(data.buffer);
         }));
-        peer.handle("sendText", duplex.handlerFrom((text) => {
+        peer.handle("sendKeyboard", duplex.handlerFrom((text) => {
             vm.keyboard_send_text(text);
         }));
         peer.handle("setScale", duplex.handlerFrom((x, y) => {

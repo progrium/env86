@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/progrium/env86/assets"
@@ -22,20 +23,21 @@ import (
 )
 
 type VM struct {
-	image     *Image
-	config    Config
-	console   *Console
-	guest     *Guest
-	addr      string
-	fsys      fs.FS
-	net       *vnet.VirtualNetwork
-	srv       *http.Server
-	win       *window.Window
-	app       *app.App
-	peer      *talk.Peer
-	loaded    chan bool
-	stopped   chan bool
-	cdpCancel func()
+	image      *Image
+	config     Config
+	console    *Console
+	guest      *Guest
+	addr       string
+	fsys       fs.FS
+	net        *vnet.VirtualNetwork
+	srv        *http.Server
+	win        *window.Window
+	app        *app.App
+	peer       *talk.Peer
+	serialPipe net.Conn
+	loaded     chan bool
+	stopped    chan bool
+	cdpCancel  func()
 }
 
 func New(image *Image, config Config) (*VM, error) {
@@ -289,13 +291,15 @@ func (vm *VM) Console() *Console {
 	return vm.console
 }
 
-// Serial returns an io.ReadWriter to the serial/COM1 port
-func (vm *VM) Serial() (io.ReadWriter, error) {
-	return nil, fmt.Errorf("TODO")
+// SerialPipe returns an io.ReadWriter to the serial/COM1 port
+func (vm *VM) SerialPipe() (io.ReadWriter, error) {
+	a, b := net.Pipe()
+	vm.serialPipe = b
+	return a, nil
 }
 
-// NIC returns an io.ReadWriter of Ethernet packets to the virtual NIC
-func (vm *VM) NIC() (io.ReadWriter, error) {
+// NetworkPipe returns an io.ReadWriter of Ethernet packets to the virtual NIC
+func (vm *VM) NetworkPipe() (io.ReadWriter, error) {
 	return nil, fmt.Errorf("TODO")
 }
 

@@ -45,11 +45,12 @@ func (c *Console) SetFullscreen() error {
 
 // func (c *Console) EnableKeyboard()  {}
 // func (c *Console) KeyboardEnabled() {}
-func (c *Console) SendText(text string) error {
+
+func (c *Console) SendKeyboard(text string) error {
 	if c.vm.peer == nil {
 		return fmt.Errorf("not ready")
 	}
-	_, err := c.vm.peer.Call(context.TODO(), "sendText", fn.Args{text}, nil)
+	_, err := c.vm.peer.Call(context.TODO(), "sendKeyboard", fn.Args{text}, nil)
 	return err
 }
 

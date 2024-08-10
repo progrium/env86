@@ -92,7 +92,7 @@ func bootCmd() *cli.Command {
 				if cfg.PreserveMAC {
 					// this adds the vm nic to the switch route table
 					// so we can immediately dial the vm nic in port forwarding
-					vm.Console().SendText("ping -c 1 192.168.127.1\n")
+					vm.Console().SendKeyboard("ping -c 1 192.168.127.1\n")
 				}
 
 				if portForward != "" {
