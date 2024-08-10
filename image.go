@@ -25,6 +25,16 @@ type Image struct {
 	FS fs.FS
 }
 
+func LoadImageReader(r io.Reader) (*Image, error) {
+	imageUnzipped, err := gzip.NewReader(r)
+	if err != nil {
+		return nil, err
+	}
+	defer imageUnzipped.Close()
+
+	return &Image{FS: tarfs.New(tar.NewReader(imageUnzipped))}, nil
+}
+
 func LoadImage(path string) (*Image, error) {
 	imagePath, err := filepath.Abs(path)
 	if err != nil {
@@ -36,27 +46,16 @@ func LoadImage(path string) (*Image, error) {
 		return nil, err
 	}
 
-	var imageFS fs.FS
-
 	if isDir {
-		imageFS = osfs.Dir(imagePath)
-	} else {
-		imageFile, err := os.Open(imagePath)
-		if err != nil {
-			return nil, err
-		}
-		defer imageFile.Close()
-
-		imageUnzipped, err := gzip.NewReader(imageFile)
-		if err != nil {
-			return nil, err
-		}
-		defer imageUnzipped.Close()
-
-		imageFS = tarfs.New(tar.NewReader(imageUnzipped))
+		return &Image{FS: osfs.Dir(imagePath)}, nil
 	}
 
-	return &Image{FS: imageFS}, nil
+	imageFile, err := os.Open(imagePath)
+	if err != nil {
+		return nil, err
+	}
+	defer imageFile.Close()
+	return LoadImageReader(imageFile)
 }
 
 func (i *Image) Config() (Config, error) {
