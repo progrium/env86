@@ -1,6 +1,6 @@
 # env86
 
-Toolchain for embeddable virtual machines based on [v86](https://github.com/copy/v86).
+Embeddable virtual machines based on the [v86](https://github.com/copy/v86) emulator.
 
 ## Features
 

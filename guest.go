@@ -177,4 +177,3 @@ func (g *Guest) Mount(src, dst string) error {
 
 // FS(path) fs.FS
 // Dial(addr) Conn, error
-// Terminal()
