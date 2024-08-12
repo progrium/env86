@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
@@ -17,8 +18,8 @@ import (
 
 func pullCmd() *cli.Command {
 	cmd := &cli.Command{
-		Usage: "pull <repo>[@<tag>]",
-		Short: "",
+		Usage: "pull <repo>[@tag] [<image>]",
+		Short: "pull an image from a repository, optionally as a new image",
 		Args:  cli.MinArgs(1),
 		Run: func(ctx *cli.Context, args []string) {
 			if strings.HasPrefix(args[0], "http://") || strings.HasPrefix(args[0], "https://") {
@@ -153,6 +154,24 @@ func pullCmd() *cli.Command {
 
 			// TODO: set latest symlink if specified or implied tag was latest
 
+			if len(args) < 2 {
+				return
+			}
+			newImage := args[1]
+			if !strings.HasPrefix(newImage, "./") {
+				exists, fullPath := globalImage(newImage)
+				if exists {
+					log.Fatal("global image already exists")
+				}
+				newImage = fullPath
+			}
+			os.MkdirAll(filepath.Dir(newImage), 0755)
+			cp := exec.Command("sh", "-c", fmt.Sprintf("cp -r %s %s", imageDst, newImage))
+			out, err := cp.CombinedOutput()
+			if err != nil {
+				os.Stderr.Write(out)
+				log.Fatal(err)
+			}
 		},
 	}
 	return cmd
