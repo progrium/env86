@@ -9,8 +9,7 @@ export async function boot(imageURL, options) {
     
     let config = Object.assign(imageConfig, options);
     const initStateChunks = imageConfig["initial_state_parts"];
-    const stateChunkURLs = generateRange(initStateChunks).map(suffix => `${imageURL}/state/initial.state.${suffix}`);
-    const downloader = () => downloadChunks(stateChunkURLs);
+    const downloader = async () => await downloadChunks(generateRange(initStateChunks).map(suffix => `${imageURL}/state/initial.state.${suffix}`));
     if (initStateChunks && !config["initial_state"]) {    
         config["initial_state"] = {
             buffer: await downloader()
