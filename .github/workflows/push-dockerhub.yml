@@ -31,4 +31,4 @@ jobs:
           context: .
           file: ./scripts/Dockerfile.build
           push: true
-          tags: latest
+          tags: progrium/env86:latest
