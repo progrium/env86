@@ -9,10 +9,16 @@ export async function boot(imageURL, options) {
     
     let config = Object.assign(imageConfig, options);
     const initStateChunks = imageConfig["initial_state_parts"];
-    if (initStateChunks) {
-        const stateChunkURLs = generateRange(initStateChunks).map(suffix => `${imageURL}/state/initial.state.${suffix}`);
+    const stateChunkURLs = generateRange(initStateChunks).map(suffix => `${imageURL}/state/initial.state.${suffix}`);
+    const downloader = () => downloadChunks(stateChunkURLs);
+    if (initStateChunks && !config["initial_state"]) {    
         config["initial_state"] = {
-            buffer: await downloadChunks(stateChunkURLs)
+            buffer: await downloader()
+        };
+    }
+    if (typeof config["initial_state"] === 'function') {
+        config["initial_state"] = {
+            buffer: await config["initial_state"](downloader)
         };
     }
 
