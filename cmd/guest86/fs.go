@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+
 	"tractor.dev/toolkit-go/engine/fs"
 )
 
@@ -55,4 +57,24 @@ func (api *API) WriteFile(path string, data []byte) error {
 
 func (api *API) MakeDir(path string) error {
 	return fs.MkdirAll(api.FS, path, 0744)
+}
+
+func (api *API) RemoveAll(path string) error {
+	rfs, ok := api.FS.(interface {
+		RemoveAll(path string) error
+	})
+	if !ok {
+		return errors.ErrUnsupported
+	}
+	return rfs.RemoveAll(path)
+}
+
+func (api *API) Rename(path, newpath string) error {
+	rfs, ok := api.FS.(interface {
+		Rename(oldname, newname string) error
+	})
+	if !ok {
+		return errors.ErrUnsupported
+	}
+	return rfs.Rename(path, newpath)
 }
