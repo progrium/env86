@@ -2,8 +2,6 @@ module github.com/progrium/env86
 
 go 1.23
 
-toolchain go1.23.1
-
 replace golang.org/x/sys => github.com/progrium/sys-wasm v0.0.0-20240620001524-43ddd9475fa9
 
 require (

@@ -38,7 +38,7 @@ ENV CHROME_BIN=/usr/bin/chromium-browser \
 ENV CHROMIUM_FLAGS="--disable-software-rasterizer --disable-dev-shm-usage"
 COPY . .
 RUN mv ./scripts/local.conf /etc/fonts/local.conf
-RUN sed -i 's/go 1.22.1/go 1.22/g' go.mod
+RUN sed -i 's/go 1.23/go 1.22/g' go.mod
 RUN go mod tidy
 COPY --from=kernel /boot/vmlinuz-lts /app/assets/vmlinuz.bin
 COPY --from=kernel /boot/initramfs-lts /app/assets/initramfs.bin
