@@ -1,6 +1,6 @@
 .PHONY: install build assets release guest v86 kernel
 
-VERSION=0.1dev
+VERSION=0.2dev
 
 all: assets build
 
