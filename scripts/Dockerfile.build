@@ -22,7 +22,7 @@ RUN cp ./build/v86.wasm /out
 RUN cp ./bios/seabios.bin /out
 RUN cp ./bios/vgabios.bin /out
 
-FROM alpine
+FROM alpine:edge
 WORKDIR /app
 RUN apk add -u go build-base docker pkgconf webkit2gtk-dev gtk+3.0-dev libayatana-appindicator-dev
 RUN apk upgrade --no-cache --available \
@@ -38,7 +38,6 @@ ENV CHROME_BIN=/usr/bin/chromium-browser \
 ENV CHROMIUM_FLAGS="--disable-software-rasterizer --disable-dev-shm-usage"
 COPY . .
 RUN mv ./scripts/local.conf /etc/fonts/local.conf
-RUN sed -i 's/go 1.23/go 1.22/g' go.mod
 RUN go mod tidy
 COPY --from=kernel /boot/vmlinuz-lts /app/assets/vmlinuz.bin
 COPY --from=kernel /boot/initramfs-lts /app/assets/initramfs.bin
