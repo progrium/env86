@@ -18,6 +18,8 @@ github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkp
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/ebitengine/purego v0.7.1 h1:6/55d26lG3o9VCZX8lping+bZcmShseiqlh2bnUDiPA=
 github.com/ebitengine/purego v0.7.1/go.mod h1:ah1In8AOtksoNK6yk5z1HTJeUkC1Ez4Wk2idgGslMwQ=
+github.com/ebitengine/purego v0.8.1 h1:sdRKd6plj7KYW33EH5As6YKfe8m9zbN9JMrOjNVF/BE=
+github.com/ebitengine/purego v0.8.1/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
 github.com/evanw/esbuild v0.24.0 h1:GZ78naTLp7FKr+K7eNuM/SLs5maeiHYRPsTg6kmdsSE=
 github.com/evanw/esbuild v0.24.0/go.mod h1:D2vIQZqV/vIf/VRHtViaUtViZmG7o+kKmlBfVQuRi48=
 github.com/fxamacker/cbor/v2 v2.7.0 h1:iM5WgngdRBanHcxugY4JySA0nk1wZorNOpTgCMedv5E=
@@ -150,3 +152,5 @@ tractor.dev/toolkit-go v0.0.0-20241010005851-214d91207d07 h1:g+72jGAVthzXgyb94VM
 tractor.dev/toolkit-go v0.0.0-20241010005851-214d91207d07/go.mod h1:vI9Jf9tepHLrUqGQf7XZuRcQySNajWRKBjPD4+Ay72I=
 tractor.dev/toolkit-go/desktop v0.0.0-20241010005851-214d91207d07 h1:+dN1C2l2ZnAvHJ28Kj1Qfd/FcxOYrU1Fgds450dQF64=
 tractor.dev/toolkit-go/desktop v0.0.0-20241010005851-214d91207d07/go.mod h1:4VxzMoi8+OiKr3OrKOndJgtJQgwfVONDetqJE0dYDWg=
+tractor.dev/toolkit-go/desktop v0.0.0-20241118202920-e0a1d089f929 h1:FxJkOBnhO5rJonO7N898zb3PDApzdAKnt8MmVgR6hiU=
+tractor.dev/toolkit-go/desktop v0.0.0-20241118202920-e0a1d089f929/go.mod h1:4VxzMoi8+OiKr3OrKOndJgtJQgwfVONDetqJE0dYDWg=
