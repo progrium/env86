@@ -22,9 +22,9 @@ RUN cp ./build/v86.wasm /out
 RUN cp ./bios/seabios.bin /out
 RUN cp ./bios/vgabios.bin /out
 
-FROM alpine:edge
+FROM alpine:3.20
 WORKDIR /app
-RUN apk add -u go build-base docker pkgconf webkit2gtk-dev gtk+3.0-dev libayatana-appindicator-dev
+RUN apk add -u build-base docker pkgconf webkit2gtk-dev gtk+3.0-dev libayatana-appindicator-dev
 RUN apk upgrade --no-cache --available \
     && apk add --no-cache \
       chromium-swiftshader \
@@ -32,7 +32,7 @@ RUN apk upgrade --no-cache --available \
       font-noto-emoji \
     && apk add --no-cache \
       --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
-      font-wqy-zenhei
+      font-wqy-zenhei go
 ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/
 ENV CHROMIUM_FLAGS="--disable-software-rasterizer --disable-dev-shm-usage"
