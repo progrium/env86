@@ -14,7 +14,7 @@ require (
 	golang.org/x/net v0.30.0
 	golang.org/x/term v0.25.0
 	tractor.dev/toolkit-go v0.0.0-20241010005851-214d91207d07
-	tractor.dev/toolkit-go/desktop v0.0.0-20241118202920-e0a1d089f929
+	tractor.dev/toolkit-go/desktop v0.0.0-20241125202453-a7a809374e73
 )
 
 require (

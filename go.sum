@@ -154,3 +154,5 @@ tractor.dev/toolkit-go/desktop v0.0.0-20241010005851-214d91207d07 h1:+dN1C2l2ZnA
 tractor.dev/toolkit-go/desktop v0.0.0-20241010005851-214d91207d07/go.mod h1:4VxzMoi8+OiKr3OrKOndJgtJQgwfVONDetqJE0dYDWg=
 tractor.dev/toolkit-go/desktop v0.0.0-20241118202920-e0a1d089f929 h1:FxJkOBnhO5rJonO7N898zb3PDApzdAKnt8MmVgR6hiU=
 tractor.dev/toolkit-go/desktop v0.0.0-20241118202920-e0a1d089f929/go.mod h1:4VxzMoi8+OiKr3OrKOndJgtJQgwfVONDetqJE0dYDWg=
+tractor.dev/toolkit-go/desktop v0.0.0-20241125202453-a7a809374e73 h1:fpIv99rCL32wzLORjHz1qGZHQTxEElt37CkDcDokYJc=
+tractor.dev/toolkit-go/desktop v0.0.0-20241125202453-a7a809374e73/go.mod h1:4VxzMoi8+OiKr3OrKOndJgtJQgwfVONDetqJE0dYDWg=
