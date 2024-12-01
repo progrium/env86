@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/progrium/env86/fsutil"
+
 	"tractor.dev/toolkit-go/desktop"
 	"tractor.dev/toolkit-go/engine/cli"
 	"tractor.dev/toolkit-go/engine/fs"
@@ -64,7 +66,7 @@ func globalImage(pathspec string) (bool, string) {
 	if err == nil {
 		path = resolved
 	}
-	ok, err := fs.Exists(os.DirFS("/"), strings.TrimLeft(path, "/"))
+	ok, err := fs.Exists(fsutil.RootFS(path), fsutil.RootFSRelativePath(path))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,7 +80,7 @@ func globalImage(pathspec string) (bool, string) {
 	}
 	// if no tag specified and latest not found, try local
 	path = filepath.Join(env86Path(), image, "local")
-	ok, err = fs.Exists(os.DirFS("/"), strings.TrimLeft(path, "/"))
+	ok, err = fs.Exists(fsutil.RootFS(path), fsutil.RootFSRelativePath(path))
 	if err != nil {
 		log.Fatal(err)
 	}

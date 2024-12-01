@@ -9,7 +9,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/progrium/env86/assets"
 	"github.com/progrium/env86/fsutil"
@@ -41,7 +40,7 @@ func LoadImage(path string) (*Image, error) {
 		return nil, err
 	}
 
-	isDir, err := fs.IsDir(os.DirFS("/"), strings.TrimPrefix(imagePath, "/"))
+	isDir, err := fs.IsDir(fsutil.RootFS(imagePath), fsutil.RootFSRelativePath(imagePath))
 	if err != nil {
 		return nil, err
 	}
