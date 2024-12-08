@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/progrium/env86/fsutil"
@@ -46,10 +47,14 @@ func main() {
 func env86Path() string {
 	path := os.Getenv("ENV86_PATH")
 	if path == "" {
-		path = "~/.env86"
+		if runtime.GOOS == "windows" {
+			path = filepath.Join(os.Getenv("APPDATA"), "env86")
+		} else {
+			usr, _ := user.Current()
+			path = usr.HomeDir + "/.env86"
+		}
 	}
-	usr, _ := user.Current()
-	return strings.ReplaceAll(path, "~", usr.HomeDir)
+	return path
 }
 
 // github.com/progrium/alpine@latest => ~/.env86/github.com/progrium/alpine/3.18
