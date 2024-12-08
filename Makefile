@@ -2,6 +2,12 @@
 
 VERSION=0.2dev
 
+ifeq ($(OS),Windows_NT)
+	ASSETS_DIR := .\assets
+else
+	ASSETS_DIR := ./assets
+endif
+
 all: assets build
 
 
@@ -17,14 +23,16 @@ release:
 
 assets: guest kernel v86
 
+guest: export GOOS=linux
+guest: export GOARCH=386
 guest:
-	cd ./cmd/guest86 && GOOS=linux GOARCH=386 go build -o ../../assets/guest86 .
+	cd ./cmd/guest86 && go build -o ../../assets/guest86 .
 
 kernel:
 	docker build --platform=linux/386 -t env86-kernel -f ./scripts/Dockerfile.kernel ./scripts
-	docker run --rm --platform=linux/386 -v ./assets:/dst env86-kernel
+	docker run --rm --platform=linux/386 -v $(ASSETS_DIR):/dst env86-kernel
 
 v86:
 	docker build -t env86-v86 -f ./scripts/Dockerfile.v86 ./scripts
-	docker run --rm -v ./assets:/dst env86-v86
+	docker run --rm -v $(ASSETS_DIR):/dst env86-v86
 
