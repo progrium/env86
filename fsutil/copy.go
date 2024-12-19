@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
+	"path"
 
 	"tractor.dev/toolkit-go/engine/fs"
 )
@@ -100,7 +100,7 @@ func copyDir(srcFS fs.FS, srcPath string, dstFS fs.MutableFS, dstPath string, mo
 		return fmt.Errorf("error reading directory %q: %v", srcPath, err)
 	}
 	for _, entry := range entries {
-		if err := CopyFS(srcFS, filepath.Join(srcPath, entry.Name()), dstFS, filepath.Join(dstPath, entry.Name())); err != nil {
+		if err := CopyFS(srcFS, path.Join(srcPath, entry.Name()), dstFS, path.Join(dstPath, entry.Name())); err != nil {
 			return err
 		}
 	}
