@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -85,12 +86,13 @@ func (host *FS) isPathInMount(path string) (bool, *binding) {
 }
 
 func cleanPath(p string) string {
-	return filepath.Clean(strings.TrimLeft(p, "/\\"))
+	return path.Clean(strings.TrimLeft(p, "/\\"))
 }
 
 func trimMountPoint(path string, mntPoint string) string {
 	result := strings.TrimPrefix(path, mntPoint)
-	result = strings.TrimPrefix(result, string(filepath.Separator))
+	// Separator is always / for io/fs instances
+	result = strings.TrimPrefix(result, string("/"))
 
 	if result == "" {
 		return "."

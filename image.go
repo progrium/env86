@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/progrium/env86/assets"
@@ -219,7 +220,7 @@ func splitFile(fsys fs.FS, filename string, outputDir string, bytesPerFile int) 
 	}
 	defer file.Close()
 
-	baseName := filepath.Base(filename)
+	baseName := path.Base(filename)
 
 	buffer := make([]byte, bytesPerFile)
 	part := 0
@@ -230,7 +231,7 @@ func splitFile(fsys fs.FS, filename string, outputDir string, bytesPerFile int) 
 		}
 
 		outputFilename := fmt.Sprintf("%s.%d", baseName, part)
-		outputFile, err := f.Create(filepath.Join(outputDir, outputFilename))
+		outputFile, err := f.Create(path.Join(outputDir, outputFilename))
 		if err != nil {
 			return 0, err
 		}
@@ -247,7 +248,7 @@ func splitFile(fsys fs.FS, filename string, outputDir string, bytesPerFile int) 
 			return 0, err
 		}
 		outputFile.Close()
-		if err := f.Chmod(filepath.Join(outputDir, outputFilename), 0644); err != nil {
+		if err := f.Chmod(path.Join(outputDir, outputFilename), 0644); err != nil {
 			return 0, err
 		}
 
