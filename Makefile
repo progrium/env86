@@ -4,15 +4,17 @@ VERSION=0.2dev
 
 ifeq ($(OS),Windows_NT)
 	ASSETS_DIR := .\assets
+	ENV86 := .\env86.exe
 else
 	ASSETS_DIR := ./assets
+	ENV86 := ./env86
 endif
 
 all: assets build
 
 
 build:
-	go build -ldflags="-X 'main.Version=${VERSION}'" -o ./env86 ./cmd/env86
+	go build -ldflags="-X 'main.Version=${VERSION}'" -o $(ENV86) ./cmd/env86
 
 install: build
 	mv ./env86 /usr/local/bin/env86
