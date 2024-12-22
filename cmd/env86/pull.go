@@ -159,12 +159,17 @@ func pullCmd() *cli.Command {
 				return
 			}
 			newImage := args[1]
-			if !strings.HasPrefix(newImage, "./") {
+			if !strings.HasPrefix(newImage, "./") && !strings.HasPrefix(newImage, ".\\") {
 				exists, fullPath := globalImage(newImage)
 				if exists {
 					log.Fatal("global image already exists")
 				}
 				newImage = fullPath
+			} else {
+				newImage, err = filepath.Abs(newImage)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 			os.MkdirAll(filepath.Dir(newImage), 0755)
 			if err := fsutil.CopyFS(osfs.New(), imageDst, osfs.New(), newImage); err != nil {
