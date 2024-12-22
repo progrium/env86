@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
 	"slices"
 	"strings"
 	"syscall"
@@ -215,7 +214,7 @@ func (host *FS) OpenFile(name string, flag int, perm fs.FileMode) (fs.File, erro
 			if err != nil {
 				return nil, err
 			}
-			mounts = append(mounts, &renamedFileInfo{FileInfo: s, name: filepath.Base(b.mountPoint)})
+			mounts = append(mounts, &renamedFileInfo{FileInfo: s, name: path.Base(b.mountPoint)})
 		}
 		if len(mounts) == 0 {
 			return f, nil
@@ -237,7 +236,7 @@ func (fi *renamedFileInfo) Name() string {
 func (host *FS) mountsAtPath(name string) (b map[binding]fs.FS) {
 	b = make(map[binding]fs.FS)
 	for _, m := range host.binds {
-		if filepath.Dir(m.mountPoint) == name {
+		if path.Dir(m.mountPoint) == name {
 			b[m] = m.fsys
 		}
 	}
@@ -303,31 +302,31 @@ type removableFS interface {
 // it can but returns the first error it encounters. If the path does not exist,
 // RemoveAll returns nil (no error). If there is an error, it will be of type *PathError.
 // Additionally, this function errors if attempting to remove a mountpoint.
-func removeAll(fsys removableFS, path string, mntPoints []string) error {
-	path = filepath.Clean(path)
+func removeAll(fsys removableFS, filePath string, mntPoints []string) error {
+	filePath = path.Clean(filePath)
 
-	if exists, err := fsutil.Exists(fsys, path); !exists || err != nil {
+	if exists, err := fsutil.Exists(fsys, filePath); !exists || err != nil {
 		return err
 	}
 
-	return rmRecurse(fsys, path, mntPoints)
+	return rmRecurse(fsys, filePath, mntPoints)
 
 }
 
-func rmRecurse(fsys removableFS, path string, mntPoints []string) error {
-	if mntPoints != nil && slices.Contains(mntPoints, path) {
-		return &fs.PathError{Op: "remove", Path: path, Err: syscall.EBUSY}
+func rmRecurse(fsys removableFS, filePath string, mntPoints []string) error {
+	if mntPoints != nil && slices.Contains(mntPoints, filePath) {
+		return &fs.PathError{Op: "remove", Path: filePath, Err: syscall.EBUSY}
 	}
 
-	isdir, dirErr := fsutil.IsDir(fsys, path)
+	isdir, dirErr := fsutil.IsDir(fsys, filePath)
 	if dirErr != nil {
 		return dirErr
 	}
 
 	if isdir {
-		if entries, err := fs.ReadDir(fsys, path); err == nil {
+		if entries, err := fs.ReadDir(fsys, filePath); err == nil {
 			for _, entry := range entries {
-				entryPath := filepath.Join(path, entry.Name())
+				entryPath := path.Join(filePath, entry.Name())
 
 				if err := rmRecurse(fsys, entryPath, mntPoints); err != nil {
 					return err
@@ -342,7 +341,7 @@ func rmRecurse(fsys removableFS, path string, mntPoints []string) error {
 		}
 	}
 
-	return fsys.Remove(path)
+	return fsys.Remove(filePath)
 }
 
 // func (host *FS) Rename(oldname, newname string) error {
