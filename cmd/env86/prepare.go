@@ -39,7 +39,7 @@ func prepareCmd() *cli.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			exists, err := fs.DirExists(os.DirFS("/"), strings.TrimLeft(dstPath, "/"))
+			exists, err := fs.DirExists(fsutil.RootFS(dstPath), fsutil.RootFSRelativePath(dstPath))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -53,6 +53,7 @@ func prepareCmd() *cli.Command {
 				log.Fatal(err)
 			}
 
+			// osfs currently works with os native paths
 			dst := osfs.Dir(dstPath)
 			dst.MkdirAll("image", 0755)
 			if err := fsutil.CopyFS(preparedImage, ".", dst, "image"); err != nil {
