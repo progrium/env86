@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
-	"strings"
 
 	"github.com/progrium/env86/assets"
 	"github.com/progrium/env86/fsutil"
@@ -44,7 +43,7 @@ func createCmd() *cli.Command {
 				if err != nil {
 					log.Fatal(err)
 				}
-				isDir, err := fs.IsDir(os.DirFS("/"), strings.TrimPrefix(dir, "/"))
+				isDir, err := fs.IsDir(fsutil.RootFS(dir), fsutil.RootFSRelativePath(dir))
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -62,7 +61,7 @@ func createCmd() *cli.Command {
 				if err != nil {
 					log.Fatal(err)
 				}
-				isDockerfile, err := fs.Exists(os.DirFS("/"), strings.TrimPrefix(docker, "/"))
+				isDockerfile, err := fs.Exists(fsutil.RootFS(docker), fsutil.RootFSRelativePath(docker))
 				if err != nil {
 					log.Fatal(err)
 				}
