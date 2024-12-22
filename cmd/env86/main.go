@@ -57,7 +57,11 @@ func env86Path() string {
 	return path
 }
 
+// globalImage resolves a pathspec to a global image path
+// On Unix-like systems:
 // github.com/progrium/alpine@latest => ~/.env86/github.com/progrium/alpine/3.18
+// On Windows:
+// github.com/progrium/alpine@latest => %APPDATA%\env86\github.com\progrium\alpine\3.18
 func globalImage(pathspec string) (bool, string) {
 	parts := strings.Split(pathspec, "@")
 	image := strings.TrimSuffix(parts[0], "-env86")
