@@ -31,7 +31,7 @@ func createCmd() *cli.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			exists, err := fs.Exists(os.DirFS("/"), strings.TrimPrefix(imagePath, "/"))
+			exists, err := fs.Exists(fsutil.RootFS(imagePath), fsutil.RootFSRelativePath(imagePath))
 			if err != nil {
 				log.Fatal(err)
 			}
