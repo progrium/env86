@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/progrium/env86"
@@ -34,12 +35,18 @@ func bootCmd() *cli.Command {
 		Args:  cli.MinArgs(1),
 		Run: func(ctx *cli.Context, args []string) {
 			imagePath := args[0]
-			if !strings.HasPrefix(imagePath, "./") {
+			var err error
+			if !strings.HasPrefix(imagePath, "./") && !strings.HasPrefix(imagePath, ".\\") {
 				exists, fullPath := globalImage(imagePath)
 				if !exists {
 					log.Fatal("global image not found")
 				}
 				imagePath = fullPath
+			} else {
+				imagePath, err = filepath.Abs(imagePath)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 
 			image, err := env86.LoadImage(imagePath)
