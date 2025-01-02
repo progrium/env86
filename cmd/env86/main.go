@@ -6,7 +6,10 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
+
+	"github.com/progrium/env86/fsutil"
 
 	"tractor.dev/toolkit-go/desktop"
 	"tractor.dev/toolkit-go/engine/cli"
@@ -44,13 +47,21 @@ func main() {
 func env86Path() string {
 	path := os.Getenv("ENV86_PATH")
 	if path == "" {
-		path = "~/.env86"
+		if runtime.GOOS == "windows" {
+			path = filepath.Join(os.Getenv("APPDATA"), "env86")
+		} else {
+			usr, _ := user.Current()
+			path = usr.HomeDir + "/.env86"
+		}
 	}
-	usr, _ := user.Current()
-	return strings.ReplaceAll(path, "~", usr.HomeDir)
+	return path
 }
 
+// globalImage resolves a pathspec to a global image path
+// On Unix-like systems:
 // github.com/progrium/alpine@latest => ~/.env86/github.com/progrium/alpine/3.18
+// On Windows:
+// github.com/progrium/alpine@latest => %APPDATA%\env86\github.com\progrium\alpine\3.18
 func globalImage(pathspec string) (bool, string) {
 	parts := strings.Split(pathspec, "@")
 	image := strings.TrimSuffix(parts[0], "-env86")
@@ -64,7 +75,7 @@ func globalImage(pathspec string) (bool, string) {
 	if err == nil {
 		path = resolved
 	}
-	ok, err := fs.Exists(os.DirFS("/"), strings.TrimLeft(path, "/"))
+	ok, err := fs.Exists(fsutil.RootFS(path), fsutil.RootFSRelativePath(path))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,7 +89,7 @@ func globalImage(pathspec string) (bool, string) {
 	}
 	// if no tag specified and latest not found, try local
 	path = filepath.Join(env86Path(), image, "local")
-	ok, err = fs.Exists(os.DirFS("/"), strings.TrimLeft(path, "/"))
+	ok, err = fs.Exists(fsutil.RootFS(path), fsutil.RootFSRelativePath(path))
 	if err != nil {
 		log.Fatal(err)
 	}

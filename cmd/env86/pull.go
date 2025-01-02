@@ -8,12 +8,13 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
 
+	"github.com/progrium/env86/fsutil"
 	"tractor.dev/toolkit-go/engine/cli"
+	"tractor.dev/toolkit-go/engine/fs/osfs"
 )
 
 func pullCmd() *cli.Command {
@@ -30,7 +31,7 @@ func pullCmd() *cli.Command {
 			}
 			parts := strings.Split(args[0], "@")
 			repo := parts[0]
-			imageBase := strings.TrimSuffix(path.Base(repo), "-env86")
+			imageBase := strings.TrimSuffix(filepath.Base(repo), "-env86")
 			tag := "latest"
 			if len(parts) > 1 {
 				tag = parts[1]
@@ -81,8 +82,8 @@ func pullCmd() *cli.Command {
 			} else {
 				tag = path.Base(resp.Request.URL.Path)
 			}
-			if strings.HasSuffix(imageDst, "/local") {
-				imageDst = path.Join(strings.TrimSuffix(imageDst, "/local"), tag)
+			if filepath.Base(imageDst) == "local" {
+				imageDst = filepath.Join(filepath.Dir(imageDst), tag)
 			}
 
 			downloadURL := fmt.Sprintf("%s/releases/download/%s/%s-%s.tgz", repoURL, tag, imageBase, tag)
@@ -158,18 +159,20 @@ func pullCmd() *cli.Command {
 				return
 			}
 			newImage := args[1]
-			if !strings.HasPrefix(newImage, "./") {
+			if !strings.HasPrefix(newImage, "./") && !strings.HasPrefix(newImage, ".\\") {
 				exists, fullPath := globalImage(newImage)
 				if exists {
 					log.Fatal("global image already exists")
 				}
 				newImage = fullPath
+			} else {
+				newImage, err = filepath.Abs(newImage)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 			os.MkdirAll(filepath.Dir(newImage), 0755)
-			cp := exec.Command("sh", "-c", fmt.Sprintf("cp -r %s %s", imageDst, newImage))
-			out, err := cp.CombinedOutput()
-			if err != nil {
-				os.Stderr.Write(out)
+			if err := fsutil.CopyFS(osfs.New(), imageDst, osfs.New(), newImage); err != nil {
 				log.Fatal(err)
 			}
 		},

@@ -22,12 +22,18 @@ func prepareCmd() *cli.Command {
 		Args:  cli.MinArgs(2),
 		Run: func(ctx *cli.Context, args []string) {
 			imagePath := args[0]
-			if !strings.HasPrefix(imagePath, "./") {
+			var err error
+			if !strings.HasPrefix(imagePath, "./") && !strings.HasPrefix(imagePath, ".\\") {
 				exists, fullPath := globalImage(imagePath)
 				if !exists {
 					log.Fatal("global image not found")
 				}
 				imagePath = fullPath
+			} else {
+				imagePath, err = filepath.Abs(imagePath)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 
 			image, err := env86.LoadImage(imagePath)
@@ -39,7 +45,7 @@ func prepareCmd() *cli.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			exists, err := fs.DirExists(os.DirFS("/"), strings.TrimLeft(dstPath, "/"))
+			exists, err := fs.DirExists(fsutil.RootFS(dstPath), fsutil.RootFSRelativePath(dstPath))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -53,6 +59,7 @@ func prepareCmd() *cli.Command {
 				log.Fatal(err)
 			}
 
+			// osfs currently works with os native paths
 			dst := osfs.Dir(dstPath)
 			dst.MkdirAll("image", 0755)
 			if err := fsutil.CopyFS(preparedImage, ".", dst, "image"); err != nil {
